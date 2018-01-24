@@ -1,10 +1,12 @@
-mod optarg;
+#[macro_use]
+extern crate clap;
+use clap::{App, Arg};
 use std::io;
-use optarg::OptArg;
 use std::io::BufRead;
-use std::process;
 
-fn strip(leading: &String, trailing: &String) {
+
+
+fn strip(leading: &str, trailing: &str) {
     let stdin = io::stdin();
     // Each line is doesn't have a newline byte (the 0xA byte)
     // or CRLF (0xD, 0xA bytes) at the end.
@@ -18,30 +20,34 @@ fn strip(leading: &String, trailing: &String) {
     }
 }
 
+
 fn main() {
-    let optarg = OptArg::new();
-    let options = match optarg.parse() {
-        Ok(m) => m,
-        Err(f) => {
-            println!("{}", f);
-            process::exit(1);
-        }
-    };
+    let app = App::new(format!(
+        "{} ({})",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_AUTHORS")
+    )).version(crate_version!());
 
-    if options.opt_present("help") {
-        optarg.print_usage();
-        process::exit(0);
-    }
+    let options = app.arg(
+        Arg::with_name("leading")
+            .short("l")
+            .long("leading")
+            .value_name("TEXT")
+            .help("remove leading characters")
+            .takes_value(true)
+            .required(false),
+    ).arg(
+            Arg::with_name("trailing")
+                .short("t")
+                .long("trailing")
+                .value_name("TEXT")
+                .help("remove trailing characters")
+                .takes_value(true)
+                .required(false),
+        )
+        .get_matches();
 
-    let leading: String = match options.opt_str("leading") {
-        Some(x) => x,
-        None => String::new(),
-    };
-
-    let trailing: String = match options.opt_str("trailing") {
-        Some(x) => x,
-        None => String::new(),
-    };
-
+    let leading = options.value_of("leading").unwrap_or("");
+    let trailing = options.value_of("trailing").unwrap_or("");
     strip(&leading, &trailing);
 }
