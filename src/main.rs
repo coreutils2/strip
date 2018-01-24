@@ -14,6 +14,7 @@ fn strip(leading: &str, trailing: &str) {
         println!(
             "{}",
             line.unwrap()
+                .trim() // leading and trailing whitespaces are always remove
                 .trim_left_matches(leading)
                 .trim_right_matches(trailing)
         )
