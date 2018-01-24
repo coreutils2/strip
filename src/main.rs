@@ -21,15 +21,8 @@ fn strip(leading: &str, trailing: &str) {
     }
 }
 
-
-fn main() {
-    let app = App::new(format!(
-        "{} ({})",
-        env!("CARGO_PKG_NAME"),
-        env!("CARGO_PKG_AUTHORS")
-    )).version(crate_version!());
-
-    let options = app.arg(
+fn parse_options<'a, 'b>(app: clap::App<'a, 'b>) -> clap::ArgMatches<'a> {
+    return app.arg(
         Arg::with_name("leading")
             .short("l")
             .long("leading")
@@ -47,7 +40,15 @@ fn main() {
                 .required(false),
         )
         .get_matches();
+}
 
+fn main() {
+    let app = App::new(format!(
+        "{} ({})",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_AUTHORS")
+    )).version(crate_version!());
+    let options = parse_options(app);
     let leading = options.value_of("leading").unwrap_or("");
     let trailing = options.value_of("trailing").unwrap_or("");
     strip(&leading, &trailing);
