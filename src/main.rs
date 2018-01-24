@@ -6,6 +6,8 @@ use std::process;
 
 fn strip(leading: &String, trailing: &String) {
     let stdin = io::stdin();
+    // Each line is doesn't have a newline byte (the 0xA byte)
+    // or CRLF (0xD, 0xA bytes) at the end.
     for line in stdin.lock().lines() {
         println!(
             "{}",
