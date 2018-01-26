@@ -43,11 +43,7 @@ fn parse_options<'a, 'b>(app: clap::App<'a, 'b>) -> clap::ArgMatches<'a> {
 }
 
 fn main() {
-    let app = App::new(format!(
-        "{} ({})",
-        env!("CARGO_PKG_NAME"),
-        env!("CARGO_PKG_AUTHORS")
-    )).version(crate_version!());
+    let app = App::new(format!("{} (lostutils)", env!("CARGO_PKG_NAME"))).version(crate_version!());
     let options = parse_options(app);
     let leading = options.value_of("leading").unwrap_or("");
     let trailing = options.value_of("trailing").unwrap_or("");
