@@ -21,16 +21,19 @@ fn strip(leading: &str, trailing: &str) {
     }
 }
 
-fn parse_options<'a, 'b>(app: clap::App<'a, 'b>) -> clap::ArgMatches<'a> {
-    return app.arg(
-        Arg::with_name("leading")
-            .short("l")
-            .long("leading")
-            .value_name("TEXT")
-            .help("remove leading characters")
-            .takes_value(true)
-            .required(false),
-    ).arg(
+fn parse_options<'a>() -> clap::ArgMatches<'a> {
+    App::new(format!("{} (lostutils)", env!("CARGO_PKG_NAME")))
+        .version(crate_version!())
+        .arg(
+            Arg::with_name("leading")
+                .short("l")
+                .long("leading")
+                .value_name("TEXT")
+                .help("remove leading characters")
+                .takes_value(true)
+                .required(false),
+        )
+        .arg(
             Arg::with_name("trailing")
                 .short("t")
                 .long("trailing")
@@ -39,12 +42,11 @@ fn parse_options<'a, 'b>(app: clap::App<'a, 'b>) -> clap::ArgMatches<'a> {
                 .takes_value(true)
                 .required(false),
         )
-        .get_matches();
+        .get_matches()
 }
 
 fn main() {
-    let app = App::new(format!("{} (lostutils)", env!("CARGO_PKG_NAME"))).version(crate_version!());
-    let options = parse_options(app);
+    let options = parse_options();
     let leading = options.value_of("leading").unwrap_or("");
     let trailing = options.value_of("trailing").unwrap_or("");
     strip(&leading, &trailing);
